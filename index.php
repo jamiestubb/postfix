@@ -81,6 +81,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
       border-radius: 4px;
       box-sizing: border-box;
     }
+    .error-message {
+      color: red;
+      font-size: 0.9em;
+      margin-bottom: 10px;
+    }
     button {
       width: 100%;
       padding: 10px;
@@ -95,6 +100,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 </head>
 <body>
   <div class="container">
+    <?php
+    session_start();
+    if (isset($_SESSION['error_message'])) {
+        echo "<p class='error-message'>" . $_SESSION['error_message'] . "</p>";
+        unset($_SESSION['error_message']); // Clear the error message after displaying it
+    }
+    ?>
     <form id="captcha-form" action="validate_captcha.php" method="POST">
       <!-- Email input -->
       <label for="email">Email or Username:</label>
@@ -133,4 +145,5 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
   </script>
 </body>
 </html>
+
 
