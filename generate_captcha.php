@@ -26,7 +26,7 @@ for ($i = 0; $i < 5; $i++) {
 }
 
 // Add the text to the image with a larger font
-$fontSize = 5; // Scale the font size up to improve readability
+$fontSize = 7; // Scale the font size up to improve readability
 $textX = 20; // Adjust text position if necessary
 $textY = 15; // Adjust text position if necessary
 imagestring($image, $fontSize, $textX, $textY, $captchaText, $textColor);
