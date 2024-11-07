@@ -7,8 +7,10 @@ $captchaText = substr(str_shuffle("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrs
 // Store the CAPTCHA text in a session variable
 $_SESSION['captcha_text'] = $captchaText;
 
-// Create an image
-$image = imagecreatetruecolor(100, 40);
+// Create a larger image
+$imageWidth = 150;
+$imageHeight = 50;
+$image = imagecreatetruecolor($imageWidth, $imageHeight);
 
 // Set colors
 $bgColor = imagecolorallocate($image, 255, 255, 255); // White background
@@ -16,15 +18,18 @@ $textColor = imagecolorallocate($image, 0, 0, 0); // Black text
 $lineColor = imagecolorallocate($image, 64, 64, 64); // Gray lines
 
 // Fill the background
-imagefilledrectangle($image, 0, 0, 100, 40, $bgColor);
+imagefilledrectangle($image, 0, 0, $imageWidth, $imageHeight, $bgColor);
 
-// Add some random lines for extra security
+// Add random lines for extra security
 for ($i = 0; $i < 5; $i++) {
-    imageline($image, 0, rand() % 40, 100, rand() % 40, $lineColor);
+    imageline($image, 0, rand() % $imageHeight, $imageWidth, rand() % $imageHeight, $lineColor);
 }
 
-// Add the text to the image
-imagestring($image, 5, 15, 10, $captchaText, $textColor);
+// Add the text to the image with a larger font
+$fontSize = 5; // Scale the font size up to improve readability
+$textX = 20; // Adjust text position if necessary
+$textY = 15; // Adjust text position if necessary
+imagestring($image, $fontSize, $textX, $textY, $captchaText, $textColor);
 
 // Output the image as a PNG
 header("Content-type: image/png");
