@@ -3,27 +3,53 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sample Form with Cloudflare Turnstile</title>
+  <title>Conditional Form with Turnstile CAPTCHA</title>
   <!-- Include the Turnstile API script -->
   <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+  <style>
+    /* Hide the form initially */
+    #form-container {
+      display: none;
+    }
+  </style>
 </head>
 <body>
   <h2>Contact Form</h2>
   
-  <form action="process_form.php" method="POST">
-    <label for="name">Name:</label>
-    <input type="text" id="name" name="name" required>
+  <!-- Turnstile CAPTCHA container -->
+  <div class="cf-turnstile" 
+       data-sitekey="0x4AAAAAAAzbaCIIxhpKU4HJ" 
+       data-callback="onTurnstileVerified">
+  </div>
 
-    <label for="email">Email:</label>
-    <input type="email" id="email" name="email" required>
+  <!-- The form container -->
+  <div id="form-container">
+    <form action="process_form.php" method="POST">
+      <label for="name">Name:</label>
+      <input type="text" id="name" name="name" required>
 
-    <label for="message">Message:</label>
-    <textarea id="message" name="message" rows="4" required></textarea>
+      <label for="email">Email:</label>
+      <input type="email" id="email" name="email" required>
 
-    <!-- Cloudflare Turnstile CAPTCHA -->
-    <div class="cf-turnstile" data-sitekey="0x4AAAAAAAzbaCIIxhpKU4HJ"></div>
+      <label for="message">Message:</label>
+      <textarea id="message" name="message" rows="4" required></textarea>
 
-    <button type="submit">Submit</button>
-  </form>
+      <!-- Hidden Turnstile response input -->
+      <input type="hidden" name="cf-turnstile-response" id="cf-turnstile-response">
+
+      <button type="submit">Submit</button>
+    </form>
+  </div>
+
+  <script>
+    // This function is called when the Turnstile challenge is passed
+    function onTurnstileVerified(token) {
+      // Show the form container
+      document.getElementById('form-container').style.display = 'block';
+
+      // Store the Turnstile response token in the hidden input field
+      document.getElementById('cf-turnstile-response').value = token;
+    }
+  </script>
 </body>
 </html>
