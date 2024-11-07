@@ -47,7 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dual CAPTCHA Verification</title>
   <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
   <style>
@@ -59,13 +59,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
       margin: 0;
       font-family: Arial, sans-serif;
       background-color: #f4f4f4;
+      box-sizing: border-box;
     }
     .container {
       background-color: #fff;
       padding: 20px;
-      width: 400px;
+      width: 100%;
+      max-width: 400px;
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
       border-radius: 8px;
+      box-sizing: border-box;
+      margin: 20px;
     }
     h1 {
       font-size: 1.5em;
@@ -95,7 +99,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
       margin-top: 10px;
     }
     .captcha-input, #email {
-      font-size: 16px;
+      font-size: 16px; /* Prevents zoom on mobile */
       width: 100%;
       padding: 8px;
       border: 1px solid #ccc;
@@ -113,23 +117,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
       gap: 10px;
       margin-top: 20px;
     }
-    .next-button, .cancel-button {
+    .next-button {
       flex: 1;
       padding: 10px;
+      background-color: #0078d4;
+      color: #fff;
       border: none;
       border-radius: 4px;
       cursor: pointer;
       font-size: 1em;
-    }
-    .next-button {
-      background-color: #0078d4;
-      color: #fff;
-    }
-    .cancel-button {
-      background-color: transparent;
-      color: #0078d4;
-      text-decoration: underline;
-      cursor: pointer;
     }
   </style>
 </head>
@@ -153,8 +149,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
       <!-- Text-based CAPTCHA -->
       <label for="text-captcha">Enter the characters in the picture or the words in the audio: <span style="color: red;">*</span></label>
       <div class="captcha-image">
-        <img src="generate_captcha.php" alt="CAPTCHA Image" id="captcha-image">
-        <button type="button" onclick="refreshCaptcha()">↻</button>
+        <img src="generate_captcha.php" alt="CAPTCHA Image" id="captcha-image" style="max-width: 100px;">
+        <button type="button" onclick="refreshCaptcha()" style="padding: 0 8px;">↻</button>
       </div>
       <input type="text" id="text-captcha" name="text_captcha" class="captcha-input" required>
 
@@ -164,10 +160,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
            data-callback="onTurnstileVerified">
       </div>
 
-      <!-- Submit and Cancel buttons -->
+      <!-- Submit button -->
       <div class="button-container">
         <button id="next-button" class="next-button" type="submit" disabled>Next</button>
-        <button type="button" class="cancel-button" onclick="window.location.href='#'">Cancel</button>
       </div>
     </form>
   </div>
