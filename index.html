@@ -3,11 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Email Verification with CAPTCHA</title>
-  <!-- Include the Turnstile API script -->
+  <title>Secure Form with CAPTCHA</title>
   <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
   <style>
-    /* Fullscreen flexbox layout to center everything */
     body, html {
       display: flex;
       justify-content: center;
@@ -17,8 +15,6 @@
       font-family: Arial, sans-serif;
       background-color: #f4f4f4;
     }
-
-    /* Container for form and CAPTCHA */
     .container {
       text-align: center;
       background-color: #fff;
@@ -26,9 +22,7 @@
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
       border-radius: 8px;
     }
-
     #form-container {
-      display: none; /* Initially hidden */
       margin-top: 15px;
     }
   </style>
@@ -40,50 +34,36 @@
       <label for="email">Enter your email:</label>
       <input type="email" id="email" name="email" required>
       
-      <!-- Turnstile CAPTCHA container with your Site Key -->
+      <!-- Turnstile CAPTCHA -->
       <div class="cf-turnstile" 
            data-sitekey="0x4AAAAAAAzbaCIIxhpKU4HJ" 
            data-callback="onTurnstileVerified">
       </div>
     </form>
 
-    <!-- The main form container -->
-    <div id="form-container">
-      <form action="process_form.php" method="POST">
-        <input type="hidden" name="user_email" id="user_email">
-
-        <label for="name">Name:</label>
-        <input type="text" id="name" name="name" required>
-
-        <label for="message">Message:</label>
-        <textarea id="message" name="message" rows="4" required></textarea>
-
-        <!-- Hidden Turnstile response input -->
-        <input type="hidden" name="cf-turnstile-response" id="cf-turnstile-response">
-
-        <button type="submit">Submit</button>
-      </form>
-    </div>
+    <!-- Container for dynamically loaded form -->
+    <div id="form-container"></div>
   </div>
 
   <script>
-    // This function is called when the Turnstile challenge is passed
+    // This function is called when the CAPTCHA is completed successfully
     function onTurnstileVerified(token) {
-      // Get the email entered by the user
+      // Get the email value
       const email = document.getElementById('email').value;
       
       if (email) {
-        // Set the email in the main form
-        document.getElementById('user_email').value = email;
-
-        // Show the main form container
-        document.getElementById('form-container').style.display = 'block';
-
-        // Hide the email input and CAPTCHA
-        document.getElementById('email-captcha-form').style.display = 'none';
-
-        // Store the Turnstile response token in the hidden input field
-        document.getElementById('cf-turnstile-response').value = token;
+        // Send token and email to server to fetch the form
+        fetch('protected_form.php', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ token: token, email: email })
+        })
+        .then(response => response.text())
+        .then(html => {
+          document.getElementById('form-container').innerHTML = html;
+          document.getElementById('email-captcha-form').style.display = 'none';
+        })
+        .catch(error => console.error('Error fetching form:', error));
       } else {
         alert("Please enter a valid email.");
       }
