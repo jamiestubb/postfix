@@ -47,7 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
   <title>Dual CAPTCHA Verification</title>
   <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
   <style>
@@ -73,7 +73,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
       align-items: center;
       gap: 10px;
     }
-    .captcha-input {
+    .captcha-input, #email {
+      font-size: 16px; /* Prevents zoom on mobile */
       width: 100%;
       padding: 8px;
       margin-top: 10px;
@@ -145,5 +146,3 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
   </script>
 </body>
 </html>
-
-
