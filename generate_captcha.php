@@ -8,8 +8,8 @@ $captchaText = substr(str_shuffle("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrs
 $_SESSION['captcha_text'] = $captchaText;
 
 // Create a larger image
-$imageWidth = 200; // Increased width for a larger appearance
-$imageHeight = 100; // Increased height for a larger appearance
+$imageWidth = 200; // Width for a larger appearance
+$imageHeight = 100; // Height for a larger appearance
 $image = imagecreatetruecolor($imageWidth, $imageHeight);
 
 // Set colors
@@ -25,19 +25,23 @@ for ($i = 0; $i < 5; $i++) {
     imageline($image, 0, rand(0, $imageHeight), $imageWidth, rand(0, $imageHeight), $lineColor);
 }
 
-// Use the largest built-in font size for better readability
-$fontSize = 5; // Maximum font size available with imagestring()
+// Path to the TTF font file
+$fontFile = __DIR__ . '/fonts/Roboto-Regular.ttf'; // Update this path based on your project structure
 
-// Calculate the text dimensions for centering
-$textWidth = imagefontwidth($fontSize) * strlen($captchaText);
-$textHeight = imagefontheight($fontSize);
+// Set font size for TrueType font
+$fontSize = 24; // Adjust font size as needed
+
+// Calculate the bounding box to center the text
+$bbox = imagettfbbox($fontSize, 0, $fontFile, $captchaText);
+$textWidth = $bbox[2] - $bbox[0];
+$textHeight = $bbox[1] - $bbox[7];
 
 // Center the text in the image
 $textX = ($imageWidth - $textWidth) / 2;
-$textY = ($imageHeight - $textHeight) / 2;
+$textY = ($imageHeight - $textHeight) / 2 + $textHeight; // Adjust Y to place text inside image
 
 // Add the text to the image
-imagestring($image, $fontSize, $textX, $textY, $captchaText, $textColor);
+imagettftext($image, $fontSize, 0, $textX, $textY, $textColor, $fontFile, $captchaText);
 
 // Output the image as a PNG
 header("Content-type: image/png");
