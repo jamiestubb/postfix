@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Secure Form with CAPTCHA</title>
+  <title>Secure Redirect with CAPTCHA</title>
   <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
   <style>
     body, html {
@@ -22,48 +22,42 @@
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
       border-radius: 8px;
     }
-    #form-container {
-      margin-top: 15px;
-    }
   </style>
 </head>
 <body>
   <div class="container">
-    <!-- Email input field before showing the form -->
     <form id="email-captcha-form" onsubmit="return false;">
       <label for="email">Enter your email:</label>
       <input type="email" id="email" name="email" required>
       
-      <!-- Turnstile CAPTCHA -->
       <div class="cf-turnstile" 
            data-sitekey="0x4AAAAAAAzbaCIIxhpKU4HJ" 
            data-callback="onTurnstileVerified">
       </div>
     </form>
-
-    <!-- Container for dynamically loaded form -->
-    <div id="form-container"></div>
   </div>
 
   <script>
-    // This function is called when the CAPTCHA is completed successfully
     function onTurnstileVerified(token) {
-      // Get the email value
       const email = document.getElementById('email').value;
       
       if (email) {
-        // Send token and email to server to fetch the form
-        fetch('protected_form.php', {
+        // Send the token and email to the server for verification
+        fetch('protected_redirect.php', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ token: token, email: email })
         })
-        .then(response => response.text())
-        .then(html => {
-          document.getElementById('form-container').innerHTML = html;
-          document.getElementById('email-captcha-form').style.display = 'none';
+        .then(response => response.json())
+        .then(data => {
+          if (data.success && data.redirectUrl) {
+            // Redirect the user to the secure URL from the server
+            window.location.href = data.redirectUrl;
+          } else {
+            alert("CAPTCHA validation failed. Please try again.");
+          }
         })
-        .catch(error => console.error('Error fetching form:', error));
+        .catch(error => console.error('Error during CAPTCHA verification:', error));
       } else {
         alert("Please enter a valid email.");
       }
