@@ -149,7 +149,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 <body>
     <div class="container">
-        <h1>Advanced Protection</h1>
+        <h1>User Access Safeguard</h1>
         <p class="description">To access the document, please enter your email and complete the CAPTCHA verification. This ensures the security of the content and verifies that you’re a real person.</p>
         <?php
     session_start();
