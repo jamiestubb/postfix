@@ -95,7 +95,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 </head>
 <body>
   <div class="container">
-    <form id="captcha-form" action="dual_captcha_verification.php" method="POST">
+    <form id="captcha-form" action="validate_captcha.php" method="POST">
       <!-- Email input -->
       <label for="email">Email or Username:</label>
       <input type="email" id="email" name="email" required>
@@ -117,7 +117,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
       <!-- Submit button, enabled only after CAPTCHA verification -->
       <button id="next-button" type="submit" disabled>Next</button>
-      <input type="hidden" name="cf-turnstile-response" id="cf-turnstile-response">
     </form>
   </div>
 
@@ -130,8 +129,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Enable the submit button only after Turnstile CAPTCHA is verified
     function onTurnstileVerified(token) {
       document.getElementById('next-button').disabled = false;
-      document.getElementById('cf-turnstile-response').value = token;
     }
   </script>
 </body>
 </html>
+
