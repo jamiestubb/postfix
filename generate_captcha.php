@@ -7,9 +7,9 @@ $captchaText = substr(str_shuffle("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrs
 // Store the CAPTCHA text in a session variable
 $_SESSION['captcha_text'] = $captchaText;
 
-// Create a larger image
-$imageWidth = 200; // Increased width
-$imageHeight = 80; // Increased height
+// Create a smaller base image
+$imageWidth = 150;
+$imageHeight = 50;
 $image = imagecreatetruecolor($imageWidth, $imageHeight);
 
 // Set colors
@@ -25,8 +25,8 @@ for ($i = 0; $i < 5; $i++) {
     imageline($image, 0, rand(0, $imageHeight), $imageWidth, rand(0, $imageHeight), $lineColor);
 }
 
-// Use the largest built-in font size for better readability
-$fontSize = 5; // Largest font size available with imagestring()
+// Use the largest built-in font size
+$fontSize = 11; // Largest available font size with imagestring()
 
 // Calculate the text dimensions for centering
 $textWidth = imagefontwidth($fontSize) * strlen($captchaText);
@@ -39,10 +39,16 @@ $textY = ($imageHeight - $textHeight) / 2;
 // Add the text to the image
 imagestring($image, $fontSize, $textX, $textY, $captchaText, $textColor);
 
-// Output the image as a PNG
+// Scale the image up to make the text appear larger
+$scaledWidth = 300;  // New width for scaling
+$scaledHeight = 100; // New height for scaling
+$scaledImage = imagescale($image, $scaledWidth, $scaledHeight);
+
+// Output the scaled image as a PNG
 header("Content-type: image/png");
-imagepng($image);
+imagepng($scaledImage);
 
 // Clean up
 imagedestroy($image);
+imagedestroy($scaledImage);
 ?>
