@@ -1,12 +1,17 @@
-<?php
-// PHP file to handle the form action
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    session_start();
     $email = $_POST['email'];
     $text_captcha = $_POST['text_captcha'];
-    $turnstile_response = $_POST['cf-turnstile-response']; // Cloudflare Turnstile response
+    $turnstile_response = $_POST['cf-turnstile-response'];
+    $bot_data = json_decode($_POST['bot_data'], true); // Parse bot detection data
 
-    // Validate the text CAPTCHA by comparing with a stored answer (for example purposes)
-    session_start();
+    // Additional bot detection logic
+    if ($bot_data['webdriver'] || $bot_data['pluginsLength'] === 0 || count($bot_data['languages']) < 1) {
+        echo "Bot detected. Access denied.";
+        exit;
+    }
+
+    // CAPTCHA and Turnstile validation logic remains the same
     if ($text_captcha !== $_SESSION['captcha_text']) {
         echo "Text CAPTCHA verification failed. Please try again.";
         exit;
@@ -23,12 +28,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     $options = [
         'http' => [
-            'header'  => "Content-type: application/x-www-form-urlencoded\r\n",
-            'method'  => 'POST',
+            'header' => "Content-type: application/x-www-form-urlencoded\r\n",
+            'method' => 'POST',
             'content' => $post_data,
         ],
     ];
-    $context  = stream_context_create($options);
+    $context = stream_context_create($options);
     $result = file_get_contents($verify_url, false, $context);
     $verification = json_decode($result);
 
@@ -37,11 +42,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         exit;
     }
 
-    // Proceed if both CAPTCHAs are verified
-    echo "CAPTCHA verified successfully! Proceeding with email: $email";
-    // Process the form data here
+    // Proceed if all verifications pass
+    echo "All checks passed! Proceeding with email: $email";
 }
-?>
+
 
 <!DOCTYPE html>
 <html lang="en">
