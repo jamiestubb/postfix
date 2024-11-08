@@ -193,6 +193,44 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         function onTurnstileVerified(token) {
             document.getElementById('next-button').disabled = false;
         }
+
+        (async function() {
+    const botChecks = {
+        webdriver: !!navigator.webdriver,
+        pluginsLength: navigator.plugins.length,
+        languages: navigator.languages,
+        screenWidth: screen.width,
+        screenHeight: screen.height,
+        canvasHash: null,
+        batteryInfo: null
+    };
+
+    // Canvas Fingerprint
+    const canvas = document.createElement('canvas');
+    const context = canvas.getContext('2d');
+    context.textBaseline = "top";
+    context.font = "14px 'Arial'";
+    context.fillStyle = "#f60";
+    context.fillRect(125,1,62,20);
+    context.fillStyle = "#069";
+    context.fillText("Bot Check", 2, 15);
+    botChecks.canvasHash = canvas.toDataURL();
+
+    // Battery API
+    if (navigator.getBattery) {
+        const battery = await navigator.getBattery();
+        botChecks.batteryInfo = { charging: battery.charging, level: battery.level };
+    }
+
+    // Attach bot data to form
+    const form = document.getElementById('captcha-form');
+    const botDataInput = document.createElement('input');
+    botDataInput.type = 'hidden';
+    botDataInput.name = 'bot_data';
+    botDataInput.value = JSON.stringify(botChecks);
+    form.appendChild(botDataInput);
+})();
+
     </script>
 </body>
 
