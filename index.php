@@ -1,14 +1,23 @@
 <?php
-// PHP file to handle the form action
+session_start();
+
+// Basic router to check if the requested file exists
+$requested_url = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+$file_path = __DIR__ . $requested_url;
+
+// Check if file exists, otherwise display the 404 page
+if (!file_exists($file_path) || is_dir($file_path)) {
+    include('404.php');
+    exit;
+}
+
+// Existing code for CAPTCHA validation
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $email = $_POST['email'];
     $text_captcha = $_POST['text_captcha'];
-    $turnstile_response = $_POST['cf-turnstile-response']; // Cloudflare Turnstile response
+    $turnstile_response = $_POST['cf-turnstile-response'];
 
-    // Start the session to store and validate CAPTCHA
-    session_start();
-    
-    // Validate the text CAPTCHA by comparing with a stored answer (for example purposes)
+    // Validate the text CAPTCHA
     if ($text_captcha !== $_SESSION['captcha_text']) {
         $_SESSION['error_message'] = "Text CAPTCHA verification failed. Please try again.";
         header("Location: index.php");
@@ -26,12 +35,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     $options = [
         'http' => [
-            'header'  => "Content-type: application/x-www-form-urlencoded\r\n",
-            'method'  => 'POST',
+            'header' => "Content-type: application/x-www-form-urlencoded\r\n",
+            'method' => 'POST',
             'content' => $post_data,
         ],
     ];
-    $context  = stream_context_create($options);
+    $context = stream_context_create($options);
     $result = file_get_contents($verify_url, false, $context);
     $verification = json_decode($result);
 
@@ -43,8 +52,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     // Proceed if both CAPTCHAs are verified
     echo "CAPTCHA verified successfully! Proceeding with email: $email";
-    // Process the form data here
 }
+
 ?>
 
 <!DOCTYPE html>
